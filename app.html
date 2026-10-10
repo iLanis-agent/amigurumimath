@@ -1,0 +1,92 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Amigurumi math - eye sizing, stuffing weight, bag count</title>
+<style>
+  :root { --ink:#181c3a; --accent:#4b56b3; --paper:#f8f8fc; --card:#ffffff; --line:#dde0f0; }
+  * { box-sizing: border-box; }
+  body { margin:0; font-family: Georgia, 'Times New Roman', serif; background:var(--paper); color:var(--ink); }
+  header { padding:2rem 1.25rem 1rem; max-width:960px; margin:0 auto; }
+  h1 { font-size:1.9rem; margin:0 0 .35rem; }
+  header p { margin:.25rem 0; color:#3a4076; max-width:46rem; line-height:1.45; }
+  .norms { font-size:.9rem; color:#464c82; margin-top:.6rem; }
+  main { max-width:960px; margin:0 auto; padding:0 1.25rem 3rem; display:grid; gap:1.25rem; }
+  @media (min-width:820px){ main { grid-template-columns:1fr 1fr 1fr; } }
+  .card { background:var(--card); border:1px solid var(--line); border-radius:10px; padding:1.1rem 1.1rem 1.25rem; }
+  .card h2 { font-size:1.15rem; margin:.1rem 0 .5rem; }
+  .card p.desc { font-size:.9rem; color:#464c82; margin:.2rem 0 .8rem; line-height:1.4; }
+  label { display:block; font-size:.85rem; margin:.55rem 0 .15rem; color:#343b6a; }
+  input { width:100%; padding:.45rem .5rem; font-size:1rem; border:1px solid var(--line); border-radius:6px; font-family:inherit; background:#fff; }
+  button { margin-top:.8rem; width:100%; padding:.55rem; font-size:1rem; font-family:inherit; background:var(--accent); color:#fff; border:0; border-radius:6px; cursor:pointer; }
+  button:hover { background:#3c4591; }
+  .out { margin-top:.9rem; font-size:.95rem; line-height:1.5; min-height:3.2rem; }
+  .err { color:#a02323; }
+  footer { max-width:960px; margin:0 auto; padding:0 1.25rem 2.5rem; font-size:.85rem; color:#9498c4; }
+  a { color:var(--accent); }
+</style>
+</head>
+<body>
+<header>
+  <h1>Amigurumi math</h1>
+  <p>Size the eyes from the head you made, weigh the stuffing, count the bags. Exact arithmetic, every borrowed number labeled.</p>
+  <p class="norms">Labeled norms: eyes about 1/6 of head diameter, gap about half a diameter; stuffing about 12 g per liter, ellipsoid estimate. Safety eyes are a choking hazard for children under three.</p>
+</header>
+<main>
+  <section class="card" id="eye">
+    <h2>Eye sizing</h2>
+    <p class="desc">Head circumference becomes an eye size and a placement gap.</p>
+    <label for="e-head">Head circumference (cm)</label>
+    <input id="e-head" type="number" step="0.5" min="0" value="20">
+    <button id="e-go">Size the eyes</button>
+    <div class="out" id="e-out"></div>
+  </section>
+
+  <section class="card" id="stuff">
+    <h2>Stuffing weight</h2>
+    <p class="desc">Toy dimensions become the fiberfill to plan on.</p>
+    <label for="s-len">Toy length (cm)</label>
+    <input id="s-len" type="number" step="0.5" min="0" value="12">
+    <label for="s-wid">Toy width (cm)</label>
+    <input id="s-wid" type="number" step="0.5" min="0" value="8">
+    <label for="s-hgt">Toy height (cm)</label>
+    <input id="s-hgt" type="number" step="0.5" min="0" value="8">
+    <button id="s-go">Weigh the stuffing</button>
+    <div class="out" id="s-out"></div>
+  </section>
+
+  <section class="card" id="bag">
+    <h2>Bag count</h2>
+    <p class="desc">Toys and per-toy grams become the bags to buy.</p>
+    <label for="b-toys">Toys planned</label>
+    <input id="b-toys" type="number" step="1" min="0" value="3">
+    <label for="b-per">Fiberfill per toy (g)</label>
+    <input id="b-per" type="number" step="0.1" min="0" value="4.8">
+    <label for="b-bag">Bag size (g)</label>
+    <input id="b-bag" type="number" step="50" min="0" value="200">
+    <button id="b-go">Count the bags</button>
+    <div class="out" id="b-out"></div>
+  </section>
+</main>
+<footer>Built by the app factory. <a href="index.html">About</a> &middot; <a href="https://github.com/iLanis-agent/amigurumimath">Source</a></footer>
+<script src="engine.js"></script>
+<script>
+function num(id){ return parseFloat(document.getElementById(id).value); }
+function show(id, r, render){
+  var el = document.getElementById(id);
+  if (r.error) { el.textContent = r.error; el.classList.add('err'); }
+  else { el.textContent = render(r); el.classList.remove('err'); }
+}
+document.getElementById('e-go').addEventListener('click', function(){
+  show('e-out', AmigurumiMath.eyeSize(num('e-head')), AmigurumiMath.renderEye);
+});
+document.getElementById('s-go').addEventListener('click', function(){
+  show('s-out', AmigurumiMath.stuffing(num('s-len'),num('s-wid'),num('s-hgt')), AmigurumiMath.renderStuff);
+});
+document.getElementById('b-go').addEventListener('click', function(){
+  show('b-out', AmigurumiMath.bagCount(num('b-toys'),num('b-per'),num('b-bag')), AmigurumiMath.renderBag);
+});
+</script>
+</body>
+</html>
